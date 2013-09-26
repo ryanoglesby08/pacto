@@ -26,7 +26,7 @@ module Pacto
       end
 
       it 'downcases the method' do
-        expect(request.method).to eq request.method.downcase
+        expect(request.method.to_s).to eq request.method.to_s.downcase
       end
 
       it 'returns a symbol' do

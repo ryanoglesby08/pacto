@@ -11,7 +11,7 @@ describe 'Templating' do
     Pacto.register_contract(contract, 'my_contract')
     Pacto.use('my_contract', {:key => key, :auth_token => auth_token})
 
-    raw_response = HTTParty.get('http://dummyprovider.com/echo', headers: {
+    raw_response = HTTParty.get('http://dummyprovider.com/echo', :headers => {
       'Accept' => 'application/json',
       'Custom-Auth-Token' => "#{auth_token}",
       'X-Message' => "#{key}"

@@ -20,7 +20,7 @@ module Pacto
     end
 
     def level
-      log_levels.key @log.level
+      log_levels.index @log.level
     end
 
     private
@@ -31,11 +31,11 @@ module Pacto
 
     def log_levels
       {
-        debug: ::Logger::DEBUG,
-        info:  ::Logger::INFO,
-        warn:  ::Logger::WARN,
-        error: ::Logger::ERROR,
-        fatal: ::Logger::FATAL
+        :debug => ::Logger::DEBUG,
+        :info  => ::Logger::INFO,
+        :warn  => ::Logger::WARN,
+        :error => ::Logger::ERROR,
+        :fatal => ::Logger::FATAL
       }
     end
   end

@@ -31,7 +31,9 @@ module Pacto
       describe '#initialize' do
         it 'should setup a callback' do
           WebMock.should_receive(:after_request) do | arg, &block |
-            block.parameters.size.should == 2
+            unless RUBY_VERSION == '1.8.7'
+              block.parameters.size.should == 2
+            end
           end
 
           described_class.new

@@ -106,7 +106,7 @@ describe Pacto do
     end
     context 'when contracts are found for a request' do
       it 'should return the matching contracts' do
-        my_contracts = 5.times.inject([]) do |res|
+        my_contracts = 5.times.inject([]) do |res, element|
           res << create_dummy_contract
         end
 

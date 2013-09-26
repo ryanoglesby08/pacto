@@ -10,9 +10,9 @@ module Pacto
         super(server)
 
         @doer = PlaybackServlet.new({
-          status: 200,
-          headers: {'Content-Type' => 'application/json'},
-          body: json
+          :status => 200,
+          :headers => {'Content-Type' => 'application/json'},
+          :body => json
         })
       end
 

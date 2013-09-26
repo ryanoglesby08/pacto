@@ -1,2 +1,2 @@
-require_relative 'server/dummy'
-require_relative 'server/playback_servlet'
+require 'pacto/server/dummy'
+require 'pacto/server/playback_servlet'

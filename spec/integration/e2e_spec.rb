@@ -32,7 +32,7 @@ describe 'Pacto' do
     end
 
     let :response do
-      raw_response = HTTParty.get('http://dummyprovider.com/hello', headers: {'Accept' => 'application/json' })
+      raw_response = HTTParty.get('http://dummyprovider.com/hello', :headers => {'Accept' => 'application/json' })
       JSON.parse(raw_response.body)
     end
   end
@@ -55,12 +55,12 @@ describe 'Pacto' do
 
       Pacto.use(:devices, {:device_id => 42})
 
-      raw_response = HTTParty.get('http://dummyprovider.com/hello', headers: {'Accept' => 'application/json' })
+      raw_response = HTTParty.get('http://dummyprovider.com/hello', :headers => {'Accept' => 'application/json' })
       login_response = JSON.parse(raw_response.body)
       login_response.keys.should == ['message']
       login_response['message'].should be_kind_of(String)
 
-      devices_response = HTTParty.get('http://dummyprovider.com/strict', headers: {'Accept' => 'application/json' })
+      devices_response = HTTParty.get('http://dummyprovider.com/strict', :headers => {'Accept' => 'application/json' })
       devices_response = JSON.parse(devices_response.body)
       devices_response['devices'].should have(2).items
       devices_response['devices'][0].should == '/dev/42'

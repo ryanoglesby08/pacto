@@ -16,6 +16,7 @@ module Pacto
       raise ArgumentError, "contract \"#{tag}\" not found" if merged_contracts.empty?
 
       merged_contracts.each do |contract|
+        puts "class #{contract.class}"
         contract.stub_contract! values
       end
       merged_contracts.count

@@ -31,8 +31,10 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "aruba"
   gem.add_development_dependency "guard-rspec"
-  gem.add_development_dependency "rubocop"
-  gem.add_development_dependency "guard-rubocop"
+  unless RUBY_VERSION == '1.8.7'
+    gem.add_development_dependency "rubocop"
+    gem.add_development_dependency "guard-rubocop"
+  end
   gem.add_development_dependency "guard-cucumber"
   gem.add_development_dependency "rb-fsevent" if RUBY_PLATFORM =~ /darwin/i
   gem.add_development_dependency "terminal-notifier-guard" if RUBY_PLATFORM =~ /darwin/i
