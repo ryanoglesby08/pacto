@@ -1,3 +1,4 @@
+require 'require_relative'
 require 'pacto/version'
 
 require 'httparty'

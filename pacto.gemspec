@@ -31,6 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "aruba"
   gem.add_development_dependency "guard-rspec"
+  gem.add_development_dependency "rbx-require-relative" if RUBY_VERSION == '1.8.7'
   gem.add_development_dependency "rubocop" unless RUBY_VERSION == '1.8.7'
   gem.add_development_dependency "guard-rubocop" unless RUBY_VERSION == '1.8.7'
   gem.add_development_dependency "guard-cucumber"
