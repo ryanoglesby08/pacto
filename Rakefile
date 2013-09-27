@@ -4,14 +4,21 @@ require 'pacto/rake_task'
 require 'cucumber'
 require 'cucumber/rake/task'
 require 'coveralls/rake/task'
-require 'rubocop/rake_task'
 
 Coveralls::RakeTask.new
 
-Rubocop::RakeTask.new(:rubocop) do |task|
-  task.patterns = ['**/*.rb', 'Rakefile']
-  # abort rake on failure
-  task.fail_on_error = false
+if defined?(Rubocop)
+  require 'rubocop/rake_task'
+
+  Rubocop::RakeTask.new(:rubocop) do |task|
+    task.patterns = ['**/*.rb', 'Rakefile']
+    # abort rake on failure
+    task.fail_on_error = false
+  end
+else
+  task :rubocop do
+    puts "Rubocop disables becasue does't work on Ruby 1.8.7"
+  end
 end
 
 Cucumber::Rake::Task.new(:journeys) do |t|
