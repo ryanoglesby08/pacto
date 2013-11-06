@@ -12,6 +12,12 @@ module Pacto
         end
 
         def generate(request_signature, response)
+          if request_signature.uri.host =~ /json-schema\.org/
+            # FIXME: This is hacky.  Ideally we shouldn't be base schemas anyways.
+            LOGGER.debug('Skipping generation (json-schema.org detected)')
+            return
+          end
+
           LOGGER.debug("Generating Contract for #{request_signature}, #{response}")
           uri = URI(request_signature.uri)
           basename = File.basename(uri.path, '.json') + '.json'
@@ -27,7 +33,8 @@ module Pacto
               File.write(contract_file, generator.save('vcr', pacto_request, pacto_response))
               LOGGER.debug("Generating #{contract_file}")
             rescue => e
-              LOGGER.error("Error while generating Contract: #{e.inspect}")
+              LOGGER.error("Error while generating Contract #{contract_file}: #{e}")
+              LOGGER.error("Backtrace: #{e.backtrace}")
             end
           end
         end
