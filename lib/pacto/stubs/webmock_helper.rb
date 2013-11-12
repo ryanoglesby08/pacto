@@ -5,8 +5,7 @@ module Pacto
         def validate(request_signature, response)
           pacto_response = webmock_to_pacto_response(response)
           contract = Pacto.contract_for(request_signature)
-          logger.debug("Validating #{request_signature}, #{response} against #{contract}")
-          puts contract.validate(pacto_response) unless contract.nil?
+          Pacto::ValidationRepository.instance.add_validation request_signature, response, contract
         end
 
         def generate(request_signature, response)
