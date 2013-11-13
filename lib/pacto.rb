@@ -13,6 +13,7 @@ require 'logger'
 require 'pacto/utils'
 require 'pacto/ui'
 require 'pacto/core/contract_repository'
+require 'pacto/core/validation_repository'
 require 'pacto/core/configuration'
 require 'pacto/core/modes'
 require 'pacto/core/callback'
@@ -66,6 +67,10 @@ module Pacto
 
   def self.build_from_file(contract_path, host, file_pre_processor = Pacto.configuration.preprocessor)
     ContractFactory.build_from_file(contract_path, host, file_pre_processor)
+  end
+
+  def self.has_validated? tag
+    false
   end
 
 end

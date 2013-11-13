@@ -5,11 +5,16 @@ module Pacto
         def validate(request_signature, response)
           pacto_response = webmock_to_pacto_response(response)
           contract = Pacto.contract_for(request_signature)
-          logger.debug("Validating #{request_signature}, #{response} against #{contract}")
-          puts contract.validate(pacto_response) unless contract.nil?
+          Pacto::ValidationRepository.instance.add_validation request_signature, response, contract
         end
 
         def generate(request_signature, response)
+          if request_signature.uri.host =~ /json-schema\.org/
+            # FIXME: This is hacky.  Ideally we shouldn't be base schemas anyways.
+            logger.debug('Skipping generation (json-schema.org detected)')
+            return
+          end
+
           logger.debug("Generating Contract for #{request_signature}, #{response}")
           uri = URI(request_signature.uri)
           basename = File.basename(uri.path, '.json') + '.json'
@@ -25,7 +30,8 @@ module Pacto
               File.write(contract_file, generator.save('vcr', pacto_request, pacto_response))
               logger.debug("Generating #{contract_file}")
             rescue => e
-              logger.error("Error while generating Contract: #{e.inspect}")
+              logger.error("Error while generating Contract #{contract_file}: #{e}")
+              logger.error("Backtrace: #{e.backtrace}")
             end
           end
         end
