@@ -71,8 +71,4 @@ module Pacto
     ContractFactory.build_from_file(contract_path, host, file_pre_processor)
   end
 
-  def self.has_validated? tag
-    false
-  end
-
 end
