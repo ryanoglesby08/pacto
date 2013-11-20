@@ -11,7 +11,7 @@ module Pacto
 
       def stub_request! request, response, stubbing = true
         strict = Pacto.configuration.strict_matchers
-        uri_pattern = build_uri_pattern request, strict
+        uri_pattern = Addressable::Template.new("#{request.host}#{request.path}")
         if stubbing
           stub = WebMock.stub_request(request.method, uri_pattern)
           stub.to_return(
@@ -42,19 +42,6 @@ module Pacto
       end
 
       private
-
-      def build_uri_pattern(request, strict)
-        host_pattern = request.host
-        path_pattern = request.path
-        if strict
-          uri_pattern = "#{host_pattern}#{path_pattern}"
-        else
-          path_pattern = path_pattern.gsub(/\/:\w+/, '/[:\w]+')
-          host_pattern = Regexp.quote(request.host)
-          uri_pattern = /#{host_pattern}#{path_pattern}/
-        end
-        uri_pattern
-      end
 
       def register_callbacks
         WebMock.after_request do |request_signature, response|

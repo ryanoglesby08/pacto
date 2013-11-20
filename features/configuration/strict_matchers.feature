@@ -2,7 +2,7 @@ Feature: Strict Matching
 
   By default, Pacto matches requests to contracts (and stubs) using exact request paths, parameters, and headers.  This strict behavior is useful for Consumer-Driven Contracts.
 
-  You can use less strict matching so the same contract can match multiple similar requests.  This is useful for matching contracts with resource identifiers in the path.  Any placeholder in the path (like :id in /beers/:id) is considered a resource identifier and will match any alphanumeric combination.
+  You can use less strict matching so the same contract can match multiple similar requests.  This is useful for matching contracts with resource identifiers in the path.  Any placeholder in the path (like {id} in /beers/{id}) is considered a resource identifier and will match any alphanumeric combination.  This pattern follows [RFC 6570](http://tools.ietf.org/html/rfc6570).
 
   You can change the default behavior to the behavior that allows placeholders and ignores headers or request parameters by setting the strict_matchers configuration option:
 
@@ -13,12 +13,20 @@ Feature: Strict Matching
   ```
 
   Background:
+    Given a file named "Gemfile" with:
+    """ruby
+    source 'https://rubygems.org'
+
+    gem 'pacto', :path => '../..'
+    gem 'webmock', :git => 'git@github.com:maxlinc/webmock.git', :branch => 'addressable'
+    gem 'excon'
+    """
     Given a file named "contracts/hello_contract.json" with:
       """json
       {
         "request": {
           "method": "GET",
-          "path": "/hello/:id",
+          "path": "/hello/{id}",
           "headers": {
             "Accept": "application/json"
           },
@@ -56,16 +64,16 @@ Feature: Strict Matching
       def response url, headers
         begin
           HTTParty.get(url, headers)
-        rescue WebMock::NetConnectNotAllowedError => e
+        rescue URI::InvalidURIError, WebMock::NetConnectNotAllowedError => e
           e.class
         end
       end
 
       print 'Exact: '
-      puts response 'http://dummyprovider.com/hello/:id', headers: {'Accept' => 'application/json' }
+      puts response 'http://dummyprovider.com/hello/{id}', headers: {'Accept' => 'application/json' }
 
       print 'Wrong headers: '
-      puts response 'http://dummyprovider.com/hello/:id', headers: {'Content-Type' => 'application/json' }
+      puts response 'http://dummyprovider.com/hello/{id}', headers: {'Content-Type' => 'application/json' }
 
       print 'ID placeholder: '
       puts response 'http://dummyprovider.com/hello/123', headers: {'Accept' => 'application/json' }
@@ -77,9 +85,9 @@ Feature: Strict Matching
       """
       Pacto.configuration.strict_matchers = true
 
-      Exact: {"message"=>"Hello, world!"}
-      Wrong headers: WebMock::NetConnectNotAllowedError
-      ID placeholder: WebMock::NetConnectNotAllowedError
+      Exact: URI::InvalidURIError
+      Wrong headers: URI::InvalidURIError
+      ID placeholder: {"message"=>"Hello, world!"}
       """
 
   Scenario: Non-strict matching
@@ -88,7 +96,7 @@ Feature: Strict Matching
       """
       Pacto.configuration.strict_matchers = false
 
-      Exact: {"message"=>"Hello, world!"}
-      Wrong headers: {"message"=>"Hello, world!"}
+      Exact: URI::InvalidURIError
+      Wrong headers: URI::InvalidURIError
       ID placeholder: {"message"=>"Hello, world!"}
       """    

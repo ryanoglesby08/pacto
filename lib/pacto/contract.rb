@@ -22,6 +22,11 @@ module Pacto
       @request_pattern.matches? request_signature unless @request_pattern.nil?
     end
 
+    def extract_values request_signature
+      uri_pattern = Addressable::Template.new("#{@request.host}#{@request.path}")
+      uri_pattern.extract(request_signature.uri) || {}
+    end
+
     private
 
     def provider_response

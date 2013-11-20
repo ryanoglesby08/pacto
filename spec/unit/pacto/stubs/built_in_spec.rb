@@ -14,7 +14,7 @@ module Pacto
         double(
           :host => 'http://localhost',
           :method => method,
-          :path => '/a/:id/c',
+          :path => '/a/{id}/c',
           :headers => {'Accept' => 'application/json'},
           :params => {'foo' => 'bar'}
         )
@@ -95,28 +95,14 @@ module Pacto
         end
 
         context 'not using strict_matchers' do
-          context 'without a placeholder' do
-            before do
-              Pacto.configuration.strict_matchers = false
-            end
-
-            it 'stubs with a regex path_pattern' do
-              described_class.new.stub_request! request, response
-              expect(stubbed_request[:path]).to eq(/#{request.host}#{request.path}/)
-            end
+          before do
+            Pacto.configuration.strict_matchers = false
           end
 
-          context 'with a placeholder do' do
-            before do
-              Pacto.configuration.strict_matchers = false
-            end
-
-            it 'stubs with a regex path_pattern including the placeholder' do
-              described_class.new.stub_request! request_with_placeholder, response
-              expected_regex = %r{#{request_with_placeholder.host}\/a\/[:\w]+\/c}
-              # No luck comparing regexes for equality, but the string representation matches...
-              expect(stubbed_request[:path].inspect).to eq(expected_regex.inspect)
-            end
+          it 'stubs with an Addressable::Template' do
+            described_class.new.stub_request! request, response
+            expect(stubbed_request[:path]).to be_a(Addressable::Template)
+            expect(stubbed_request[:path].pattern).to eq("#{request.host}#{request.path}")
           end
         end
 
@@ -131,7 +117,8 @@ module Pacto
               :headers => { 'Accept' => 'application/json' }
             ).and_return(stubbed_request)
             described_class.new.stub_request! request, response
-            expect(stubbed_request[:path]).to eq("#{request.host}#{request.path}")
+            expect(stubbed_request[:path]).to be_a(Addressable::Template)
+            expect(stubbed_request[:path].pattern).to eq("#{request.host}#{request.path}")
           end
 
           context 'when the response body is an object' do

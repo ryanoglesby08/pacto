@@ -8,6 +8,7 @@ Feature: Validation
     source 'https://rubygems.org'
 
     gem 'pacto', :path => '../..'
+    gem 'webmock', :git => 'git@github.com:maxlinc/webmock.git', :branch => 'addressable'
     gem 'excon'
     """
     Given a file named "validate.rb" with:
